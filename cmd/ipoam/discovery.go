@@ -185,15 +185,12 @@ func rtMain(cmd *Command, args []string) {
 			begin := time.Now()
 			if !rtIPv6only && dst.IP.To4() != nil {
 				ipt.IPv4PacketConn().SetTTL(i)
-				if err := ipt.Probe(rtPayload, &cm, dst.IP, ifi); err != nil {
-					fmt.Fprintf(os.Stdout, "error=%q\n", err)
-				}
 			}
 			if !rtIPv4only && dst.IP.To16() != nil && dst.IP.To4() == nil {
 				ipt.IPv6PacketConn().SetHopLimit(i)
-				if err := ipt.Probe(rtPayload, &cm, dst.IP, ifi); err != nil {
-					fmt.Fprintf(os.Stdout, "error=%q\n", err)
-				}
+			}
+			if err := ipt.Probe(rtPayload, &cm, dst.IP, ifi); err != nil {
+				fmt.Fprintf(os.Stdout, "error=%q\n", err)
 			}
 
 			cm.Seq++

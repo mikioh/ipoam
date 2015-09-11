@@ -286,17 +286,14 @@ func printCVBanner(dsts string, c *ipaddr.Cursor) {
 		fmt.Fprintf(bw, " [")
 		printed := false
 		for pos := c.First(); pos != nil; pos = c.Next() {
-			if printed {
-				fmt.Fprintf(bw, " ")
+			if !cvIPv6only && pos.IP.To4() != nil || !cvIPv4only && pos.IP.To16() != nil && pos.IP.To4() == nil {
+				if printed {
+					fmt.Fprintf(bw, " ")
+				}
+				fmt.Fprintf(bw, "%v", pos.IP)
+				printed = true
+			} else {
 				printed = false
-			}
-			if !cvIPv6only && pos.IP.To4() != nil {
-				fmt.Fprintf(bw, "%v", pos.IP)
-				printed = true
-			}
-			if !cvIPv4only && pos.IP.To16() != nil && pos.IP.To4() == nil {
-				fmt.Fprintf(bw, "%v", pos.IP)
-				printed = true
 			}
 		}
 		fmt.Fprintf(bw, "]")
