@@ -174,7 +174,7 @@ func rtMain(cmd *Command, args []string) {
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	cm := ipoam.ControlMessage{ID: os.Getpid() & 0xffff, Seq: 1, Port: rtPort}
-	hops := make([]rtHop, 0, rtPerHopProbeCount)
+	hops := make([]rtHop, 0)
 	for i := 1; i <= rtMaxHops; i++ {
 		var r ipoam.Report
 		hops = hops[:0]
