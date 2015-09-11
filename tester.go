@@ -63,7 +63,7 @@ func (t *Tester) Close() error {
 
 // Probe transmits a single probe packet to ip via ifi.
 // Each call updates the internal receive packet filter on the
-// maintenace network connection automatically.
+// maintenance network connection automatically.
 func (t *Tester) Probe(b []byte, cm *ControlMessage, ip net.IP, ifi *net.Interface) error {
 	t.initOnce.Do(t.init)
 

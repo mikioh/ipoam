@@ -56,7 +56,7 @@ Discover an IP-layer path
 
 RT (Route Trace) transmits probe packets and discovers a route to the
 destination by determining recevived ICMP error messages from nodes
-along the route. The probe packets can be carried by either UDP orn
+along the route. The probe packets can be carried by either UDP or
 ICMP.
 
 Usage:	ipoam rt|pathdisc|traceroute [flags] destination

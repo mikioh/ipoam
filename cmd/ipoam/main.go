@@ -87,7 +87,6 @@ func main() {
 		cmd.Flag.Parse(args[1:])
 		cmd.Func(cmd, cmd.Flag.Args())
 	}
-
 	flag.Usage()
 }
 

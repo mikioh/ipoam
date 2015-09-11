@@ -41,6 +41,5 @@ func facilityMain(cmd *Command, args []string) {
 		facilityIfMain(cmd, args[1:])
 		os.Exit(0)
 	}
-
 	cmd.Flag.Usage()
 }

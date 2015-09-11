@@ -111,11 +111,11 @@ func cvMain(cmd *Command, args []string) {
 			cvIPv6only = true
 		}
 	}
+
 	var ipts = [2]struct {
 		t *ipoam.Tester
 		r <-chan ipoam.Report
 	}{}
-
 	for _, p := range c.List() {
 		if !cvIPv6only && p.IP.To4() != nil && ipts[0].t == nil {
 			address := "0.0.0.0"
@@ -177,13 +177,11 @@ func cvMain(cmd *Command, args []string) {
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	var onlink ipoam.Report
 	cm := ipoam.ControlMessage{ID: os.Getpid() & 0xffff}
-
 	for i := 1; ; i++ {
 		t := time.NewTimer(time.Duration(cvWait) * time.Second)
 		defer t.Stop()
 		begin := time.Now()
 		cm.Seq = i
-
 		for pos := c.First(); pos != nil; pos = c.Next() {
 			if !cvIPv6only && pos.IP.To4() != nil {
 				stats.get(pos.IP.String()).onDeparture()

@@ -69,7 +69,7 @@ func TestTesterGlobalUnicast(t *testing.T) {
 		wait.Stop()
 
 		if len(rs) == 0 {
-			t.Error("got no records")
+			t.Logf("got no records for %s on %s, %s", tt.dst, tt.network, tt.address)
 		}
 		for _, r := range rs {
 			if r.Error != nil {
@@ -137,7 +137,7 @@ func TestTesterLinkLocalMulticast(t *testing.T) {
 		wait.Stop()
 
 		if len(rs) == 0 {
-			t.Error("got no records")
+			t.Logf("got no records for %v on %s, %s", tt.ip, tt.network, tt.address)
 		}
 		for _, r := range rs {
 			if r.Error != nil {

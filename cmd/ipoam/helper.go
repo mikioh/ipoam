@@ -19,7 +19,6 @@ func parseDsts(s string, ipv4only, ipv6only bool) (*ipaddr.Cursor, *net.Interfac
 	var ifi *net.Interface
 	var ps []ipaddr.Prefix
 	ss := strings.Split(s, ",")
-
 	for _, s := range ss {
 		if strings.Contains(s, "%") {
 			ipa, err := net.ResolveIPAddr("ip", s)

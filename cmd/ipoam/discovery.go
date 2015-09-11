@@ -111,9 +111,9 @@ func rtMain(cmd *Command, args []string) {
 			rtIPv6only = true
 		}
 	}
+
 	var ipt *ipoam.Tester
 	var dst *ipaddr.Position
-
 	for pos := c.First(); pos != nil; pos = c.Next() {
 		if !rtIPv6only && pos.IP.To4() != nil {
 			network := "udp4"
@@ -165,7 +165,6 @@ func rtMain(cmd *Command, args []string) {
 		}
 	}
 	c.Reset(nil)
-
 	if dst == nil {
 		cmd.fatal(fmt.Errorf("destination for %s not found", args[0]))
 	}
@@ -176,7 +175,6 @@ func rtMain(cmd *Command, args []string) {
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	cm := ipoam.ControlMessage{ID: os.Getpid() & 0xffff, Seq: 1, Port: rtPort}
 	hops := make([]rtHop, 0, rtPerHopProbeCount)
-
 	for i := 1; i <= rtMaxHops; i++ {
 		var r ipoam.Report
 		hops = hops[:0]
@@ -185,7 +183,6 @@ func rtMain(cmd *Command, args []string) {
 			t := time.NewTimer(time.Duration(rtWait) * time.Second)
 			defer t.Stop()
 			begin := time.Now()
-
 			if !rtIPv6only && dst.IP.To4() != nil {
 				ipt.IPv4PacketConn().SetTTL(i)
 				if err := ipt.Probe(rtPayload, &cm, dst.IP, ifi); err != nil {
@@ -223,7 +220,6 @@ func rtMain(cmd *Command, args []string) {
 			break
 		}
 	}
-
 	os.Exit(0)
 }
 
@@ -245,35 +241,37 @@ func printRTReport(i int, hops []rtHop) {
 		if h.r.Error != nil {
 			continue
 		}
-		if !h.r.Src.Equal(prev) {
-			if prev != nil {
-				fmt.Fprintf(bw, "\n     ")
-			}
-			if h.r.Src.IsUnspecified() {
-				fmt.Fprintf(bw, "*")
+		if h.r.Src.Equal(prev) {
+			fmt.Fprintf(bw, "  %v", h.rtt)
+			continue
+		}
+		if prev != nil {
+			fmt.Fprintf(bw, "\n     ")
+		}
+		if h.r.Src.IsUnspecified() {
+			fmt.Fprintf(bw, "*")
+		} else {
+			if rtNoRevLookup {
+				fmt.Fprintf(bw, "%v", h.r.Src)
 			} else {
-				if rtNoRevLookup {
+				name := revLookup(h.r.Src.String())
+				if name == "" {
 					fmt.Fprintf(bw, "%v", h.r.Src)
 				} else {
-					name := revLookup(h.r.Src.String())
-					if name == "" {
-						fmt.Fprintf(bw, "%v", h.r.Src)
-					} else {
-						fmt.Fprintf(bw, "%s (%v)", name, h.r.Src)
-					}
+					fmt.Fprintf(bw, "%s (%v)", name, h.r.Src)
 				}
-				if rtVerbose {
-					if h.r.Interface != nil {
-						fmt.Fprintf(bw, " if=%s", h.r.Interface.Name)
-					}
-					switch body := h.r.ICMP.Body.(type) {
-					case *icmp.DstUnreach:
-						printICMPExtensions(bw, body.Extensions)
-					case *icmp.ParamProb:
-						printICMPExtensions(bw, body.Extensions)
-					case *icmp.TimeExceeded:
-						printICMPExtensions(bw, body.Extensions)
-					}
+			}
+			if rtVerbose {
+				if h.r.Interface != nil {
+					fmt.Fprintf(bw, " if=%s", h.r.Interface.Name)
+				}
+				switch body := h.r.ICMP.Body.(type) {
+				case *icmp.DstUnreach:
+					printICMPExtensions(bw, body.Extensions)
+				case *icmp.ParamProb:
+					printICMPExtensions(bw, body.Extensions)
+				case *icmp.TimeExceeded:
+					printICMPExtensions(bw, body.Extensions)
 				}
 			}
 		}
