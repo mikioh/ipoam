@@ -128,13 +128,13 @@ func (t *maint) monitor(c *conn) {
 			if echo, ok := m.Body.(*icmp.Echo); ok {
 				cookie = icmpCookie(c.protocol, echo.ID, echo.Seq)
 			}
-			if cookie == t.cookie || runtime.GOOS == "linux" && !c.rawSocket {
+			if cookie == mcookie || runtime.GOOS == "linux" && !c.rawSocket {
 				t.writeReport(&r)
 			}
 		case ianaProtocolUDP:
 			sport, dport := parseOrigUDP(r.OrigPayload)
 			cookie := udpCookie(ianaProtocolUDP, sport, dport)
-			if cookie == t.cookie {
+			if cookie == mcookie {
 				t.writeReport(&r)
 			}
 		}
