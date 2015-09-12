@@ -184,17 +184,17 @@ func cvMain(cmd *Command, args []string) {
 		cm.Seq = i
 		for pos := c.First(); pos != nil; pos = c.Next() {
 			if !cvIPv6only && pos.IP.To4() != nil {
-				stats.get(pos.IP.String()).onDeparture()
-				if err := ipts[0].t.Probe(cvPayload, &cm, pos.IP, ifi); err != nil {
-					onlink.Error = err
+				onlink.Error = ipts[0].t.Probe(cvPayload, &cm, pos.IP, ifi)
+				stats.get(pos.IP.String()).onDeparture(&onlink)
+				if onlink.Error != nil {
 					printCVReport(0, &onlink)
 					continue
 				}
 			}
 			if !cvIPv4only && pos.IP.To16() != nil && pos.IP.To4() == nil {
-				stats.get(pos.IP.String()).onDeparture()
-				if err := ipts[1].t.Probe(cvPayload, &cm, pos.IP, ifi); err != nil {
-					onlink.Error = err
+				onlink.Error = ipts[1].t.Probe(cvPayload, &cm, pos.IP, ifi)
+				stats.get(pos.IP.String()).onDeparture(&onlink)
+				if onlink.Error != nil {
 					printCVReport(0, &onlink)
 					continue
 				}
@@ -275,8 +275,11 @@ func (st *cvStat) onArrival(rtt time.Duration, r *ipoam.Report) {
 	st.rttSq += float64(rtt) * float64(rtt)
 }
 
-func (st *cvStat) onDeparture() {
+func (st *cvStat) onDeparture(r *ipoam.Report) {
 	st.transmitted++
+	if r.Error != nil {
+		st.opErrors++
+	}
 }
 
 func printCVBanner(dsts string, c *ipaddr.Cursor) {
