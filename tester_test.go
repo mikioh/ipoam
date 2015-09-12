@@ -47,6 +47,13 @@ func TestTesterGlobalUnicast(t *testing.T) {
 			t.Error(err)
 			continue
 		}
+		nips := ips[:0]
+		for _, ip := range ips {
+			if ip.To4() != nil && ipt.IPv4PacketConn() != nil || ip.To16() != nil && ip.To4() == nil && ipt.IPv6PacketConn() != nil {
+				nips = append(nips, ip)
+			}
+		}
+		ips = nips
 
 		cm.Seq = i + 1
 		for _, ip := range ips {
