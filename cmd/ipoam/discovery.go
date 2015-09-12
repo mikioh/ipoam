@@ -305,7 +305,7 @@ func printICMPExtensions(w io.Writer, exts []icmp.Extension) {
 		switch ext := ext.(type) {
 		case *icmp.MPLSLabelStack:
 			for _, l := range ext.Labels {
-				fmt.Fprintf(w, " <label=%d tc=%x s=%t ttl=%d>", l.Label, l.TC, l.S, l.TTL)
+				fmt.Fprintf(w, " <label=%d tc=%#x s=%t ttl=%d>", l.Label, l.TC, l.S, l.TTL)
 			}
 		case *icmp.InterfaceInfo:
 			fmt.Fprintf(w, " <")
