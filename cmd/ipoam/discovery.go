@@ -260,7 +260,7 @@ func printRTReport(i int, hops []rtHop) {
 			}
 			if rtVerbose {
 				if h.r.Dst != nil {
-					fmt.Fprintf(bw, " hops=%d", h.r.Hops)
+					fmt.Fprintf(bw, " hops=%d to=%v", h.r.Hops, h.r.Dst)
 				}
 				if h.r.Interface != nil {
 					fmt.Fprintf(bw, " if=%s", h.r.Interface.Name)
