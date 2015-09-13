@@ -155,6 +155,7 @@ func NewTester(network, address string) (*Tester, error) {
 			return nil, err
 		}
 	default:
+		t.pconn.close()
 		return nil, net.UnknownNetworkError(network)
 	}
 
