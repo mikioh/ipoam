@@ -173,7 +173,7 @@ func newMaintConn(network, address string) (*conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.setup(false)
+	c.setup(true)
 	return c, nil
 }
 
