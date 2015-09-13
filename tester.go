@@ -39,14 +39,14 @@ func (t *Tester) init() {
 // connection.
 // It returns nil when t is not created as a tester using IPv4.
 func (t *Tester) IPv4PacketConn() *ipv4.PacketConn {
-	return t.pconn.c4
+	return t.pconn.p4
 }
 
 // IPv6PacketConn returns the ipv6.PacketConn of the probe network
 // connection.
 // It returns nil when t is not created as a tester using IPv6.
 func (t *Tester) IPv6PacketConn() *ipv6.PacketConn {
-	return t.pconn.c6
+	return t.pconn.p6
 }
 
 // Close closes the both maintenance and probe network connections.
@@ -103,10 +103,10 @@ func (t *Tester) Probe(b []byte, cm *ControlMessage, ip net.IP, ifi *net.Interfa
 		if ip.IsMulticast() && ifi != nil {
 			var err error
 			if t.pconn.protocol == ianaProtocolICMP {
-				err = t.pconn.c4.SetMulticastInterface(ifi)
+				err = t.pconn.p4.SetMulticastInterface(ifi)
 			}
 			if t.pconn.protocol == ianaProtocolIPv6ICMP {
-				err = t.pconn.c6.SetMulticastInterface(ifi)
+				err = t.pconn.p6.SetMulticastInterface(ifi)
 			}
 			if err != nil {
 				return err
@@ -132,22 +132,28 @@ func (t *Tester) Probe(b []byte, cm *ControlMessage, ip net.IP, ifi *net.Interfa
 //	NewTester("ip6:58", "2001:db8::1")
 func NewTester(network, address string) (*Tester, error) {
 	t := Tester{maint: maint{emitReport: true, report: make(chan Report, 1)}}
-	pconn, err := newConn(network, address)
+
+	var err error
+	t.pconn, err = newProbeConn(network, address)
 	if err != nil {
 		return nil, err
 	}
-	t.pconn = pconn
 
 	switch network {
-	case "ip4:icmp", "ip4:1", "ip6:ipv6-icmp", "ip6:58":
-		t.mconn = pconn
-	case "udp", "udp4", "udp6":
-		mconn, err := newConn("ip4:icmp+ip6:ipv6-icmp", pconn.ip.String())
+	case "ip4:icmp", "ip4:1":
+		t.mconn, err = newMaintConn(network, t.pconn.ip.String())
 		if err != nil {
 			t.pconn.close()
 			return nil, err
 		}
-		t.mconn = mconn
+	case "ip6:ipv6-icmp", "ip6:58":
+		t.mconn = t.pconn
+	case "udp", "udp4", "udp6":
+		t.mconn, err = newMaintConn("ip4:icmp+ip6:ipv6-icmp", t.pconn.ip.String())
+		if err != nil {
+			t.pconn.close()
+			return nil, err
+		}
 	default:
 		return nil, net.UnknownNetworkError(network)
 	}
@@ -160,9 +166,13 @@ func NewTester(network, address string) (*Tester, error) {
 			f.Accept(ipv4.ICMPTypeDestinationUnreachable)
 			f.Accept(ipv4.ICMPTypeTimeExceeded)
 			f.Accept(ipv4.ICMPTypeParameterProblem)
-			t.mconn.c4.SetICMPFilter(&f)
+			t.mconn.p4.SetICMPFilter(&f)
 		}
-		t.mconn.c4.SetControlMessage(ipv4.FlagTTL|ipv4.FlagSrc|ipv4.FlagDst|ipv4.FlagInterface, true)
+		if t.mconn.r4 != nil {
+			t.mconn.r4.SetControlMessage(ipv4.FlagTTL|ipv4.FlagSrc|ipv4.FlagDst|ipv4.FlagInterface, true)
+		} else {
+			t.mconn.p4.SetControlMessage(ipv4.FlagTTL|ipv4.FlagSrc|ipv4.FlagDst|ipv4.FlagInterface, true)
+		}
 	}
 	if t.mconn.ip.To16() != nil && t.mconn.ip.To4() == nil {
 		var f ipv6.ICMPFilter
@@ -172,8 +182,8 @@ func NewTester(network, address string) (*Tester, error) {
 		f.Accept(ipv6.ICMPTypePacketTooBig)
 		f.Accept(ipv6.ICMPTypeTimeExceeded)
 		f.Accept(ipv6.ICMPTypeParameterProblem)
-		t.mconn.c6.SetICMPFilter(&f)
-		t.mconn.c6.SetControlMessage(ipv6.FlagTrafficClass|ipv6.FlagHopLimit|ipv6.FlagSrc|ipv6.FlagDst|ipv6.FlagInterface, true)
+		t.mconn.p6.SetICMPFilter(&f)
+		t.mconn.p6.SetControlMessage(ipv6.FlagTrafficClass|ipv6.FlagHopLimit|ipv6.FlagSrc|ipv6.FlagDst|ipv6.FlagInterface, true)
 	}
 	return &t, nil
 }

@@ -59,7 +59,7 @@ func (t *maint) monitor(c *conn) {
 	b := make([]byte, 1<<16-1)
 
 	for {
-		n, cm, peer, err := c.readFrom(b)
+		rb, h, cm, peer, err := c.readFrom(b)
 		if err != nil {
 			r.Error = err
 			t.writeReport(&r)
@@ -76,6 +76,10 @@ func (t *maint) monitor(c *conn) {
 		} else {
 			r.Src = peer.(*net.IPAddr).IP
 		}
+		switch h := h.(type) {
+		case *ipv4.Header:
+			r.TC = h.TOS
+		}
 		switch cm := cm.(type) {
 		case *ipv4.ControlMessage:
 			r.Hops = cm.TTL
@@ -83,13 +87,14 @@ func (t *maint) monitor(c *conn) {
 			ifi, _ := net.InterfaceByIndex(cm.IfIndex)
 			r.Interface = ifi
 		case *ipv6.ControlMessage:
+			r.TC = cm.TrafficClass
 			r.Hops = cm.HopLimit
 			r.Dst = cm.Dst
 			ifi, _ := net.InterfaceByIndex(cm.IfIndex)
 			r.Interface = ifi
 		}
 
-		m, err := icmp.ParseMessage(c.protocol, b[:n])
+		m, err := icmp.ParseMessage(c.protocol, rb)
 		if err != nil {
 			r.Error = err
 			t.writeReport(&r)

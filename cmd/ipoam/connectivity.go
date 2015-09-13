@@ -331,7 +331,7 @@ func printCVReport(rtt time.Duration, r *ipoam.Report) {
 	if r.Dst == nil {
 		fmt.Fprintf(bw, " from=%v", r.Src)
 	} else {
-		fmt.Fprintf(bw, " hops=%d from=%v to=%v", r.Hops, r.Src, r.Dst)
+		fmt.Fprintf(bw, " tc=%#x hops=%d from=%v to=%v", r.TC, r.Hops, r.Src, r.Dst)
 	}
 	if r.Interface != nil {
 		fmt.Fprintf(bw, " if=%s", r.Interface.Name)

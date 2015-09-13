@@ -27,6 +27,7 @@ type Report struct {
 
 	// These fields may not be set when the tester is configured
 	// to use non-privileged datagram-oriented ICMP endpoint.
+	TC        int            // IPv4 TOS or IPv6 traffic-class on received packet
 	Hops      int            // IPv4 TTL or IPv6 hop-limit on receievd packet
 	Dst       net.IP         // destinaion address on received packet
 	Interface *net.Interface // inbound interface on received packet
