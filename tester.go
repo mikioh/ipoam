@@ -167,7 +167,11 @@ func NewTester(network, address string) (*Tester, error) {
 			f.Accept(ipv4.ICMPTypeDestinationUnreachable)
 			f.Accept(ipv4.ICMPTypeTimeExceeded)
 			f.Accept(ipv4.ICMPTypeParameterProblem)
-			t.mconn.p4.SetICMPFilter(&f)
+			if t.mconn.r4 != nil {
+				t.mconn.r4.SetICMPFilter(&f)
+			} else {
+				t.mconn.p4.SetICMPFilter(&f)
+			}
 		}
 		if t.mconn.r4 != nil {
 			t.mconn.r4.SetControlMessage(ipv4.FlagTTL|ipv4.FlagSrc|ipv4.FlagDst|ipv4.FlagInterface, true)
