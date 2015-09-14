@@ -39,6 +39,7 @@ Flags:
 		Outbound interface name
 	-mchops int
 		IPv4 TTL or IPv6 hop-limit on outgoing multicast packets (default 5)
+	-n	Don't use DNS reverse lookup
 	-pldlen int
 		ICMP echo payload length (default 56)
 	-q	Quiet output except summary
@@ -54,14 +55,13 @@ Flags:
 A sample output:
 
 	% sudo ipoam cv -v -4 -count=3 golang.org
-	Connectivity verification for golang.org [173.194.72.141]: 56 bytes payload
-	56 bytes tc=0x0 hops=36 from=173.194.72.141 to=192.168.0.1 if=en1 echo.id=46383 echo.seq=1 rtt=162.508918ms
-	56 bytes tc=0x0 hops=36 from=173.194.72.141 to=192.168.0.1 if=en1 echo.id=46383 echo.seq=2 rtt=157.233688ms
-	56 bytes tc=0x0 hops=36 from=173.194.72.141 to=192.168.0.1 if=en1 echo.id=46383 echo.seq=3 rtt=160.959004ms
+	Connectivity verification for golang.org [74.125.203.141]: 56 bytes payload
+	56 bytes tc=0x0 hops=46 from=th-in-f141.1e100.net. (74.125.203.141) to=192.168.0.1 if=en0 echo.id=17278 echo.seq=1 rtt=44.323195ms
+	56 bytes tc=0x0 hops=46 from=th-in-f141.1e100.net. (74.125.203.141) to=192.168.0.1 if=en0 echo.id=17278 echo.seq=2 rtt=43.952098ms
+	56 bytes tc=0x0 hops=46 from=th-in-f141.1e100.net. (74.125.203.141) to=192.168.0.1 if=en0 echo.id=17278 echo.seq=3 rtt=40.670227ms
 
 	Statistical information for golang.org:
-	173.194.72.141: 0.0% loss, rcvd=3 sent=3 op.err=0 icmp.err=0 min=157.233688ms avg=160.23387ms max=162.508918ms stddev=2.213801ms
-
+	th-in-f141.1e100.net. (74.125.203.141): 0.0% loss, rcvd=3 sent=3 op.err=0 icmp.err=0 min=40.670227ms avg=42.98184ms max=44.323195ms stddev=1.641563ms
 
 Discover an IP-layer path
 
@@ -106,17 +106,18 @@ A sample output:
 	  1  192.168.0.254 tc=0x0 hops=255 to=192.168.0.1 if=en1  6.881108ms  1.259877ms  1.216255ms
 	  2  *  1.002800195s  1.004971212s  1.001800509s
 	[...]
-	 15  72.14.204.58 tc=0x0 hops=241 to=192.168.0.1 if=en1  94.682646ms  94.999308ms  81.693418ms
-	 16  72.14.239.202 tc=0x0 hops=240 to=192.168.0.1 if=en1  105.799675ms  94.859865ms  94.828963ms
-	 17  66.249.94.80 tc=0x0 hops=233 to=192.168.0.1 if=en1 <label=28257 tc=0x4 s=true ttl=1>  149.924191ms
-	     209.85.245.206 tc=0x0 hops=233 to=192.168.0.1 if=en1 <label=32722 tc=0x4 s=true ttl=1>  154.502803ms  150.42802ms
-	 18  72.14.233.137 tc=0x0 hops=234 to=192.168.0.1 if=en1 <label=693726 tc=0x4 s=true ttl=1>  164.885999ms
-	     72.14.235.147 tc=0x0 hops=234 to=192.168.0.1 if=en1 <label=453203 tc=0x4 s=true ttl=1>  154.552519ms
-	     209.85.248.129 tc=0x0 hops=234 to=192.168.0.1 if=en1 <label=24431 tc=0x4 s=true ttl=1>  154.920485ms
-	 19  72.14.237.171 tc=0x0 hops=235 to=192.168.0.1 if=en1  170.145454ms
-	     209.85.243.21 tc=0x0 hops=235 to=192.168.0.1 if=en1  118.445733ms  154.649823ms
-	 20  *  1.000688625s  1.000789355s  1.001540175s
-	 21  tf-in-f141.1e100.net. (173.194.72.141) tc=0x0 hops=37 to=192.168.0.1 if=en1  161.714887ms  154.699088ms  139.969393ms
+	  6  72.14.204.58 tc=0x0 hops=250 to=192.168.0.1 if=en0  8.187242ms  7.70626ms  8.196697ms
+	  7  72.14.236.82 tc=0x0 hops=249 to=192.168.0.1 if=en0  8.107614ms
+	     72.14.239.202 tc=0x0 hops=249 to=192.168.0.1 if=en0  8.463247ms  8.128451ms
+	  8  72.14.239.55 tc=0x0 hops=244 to=192.168.0.1 if=en0 <label=29135 tc=0x4 s=true ttl=1>  44.717919ms
+	     209.85.255.34 tc=0x0 hops=246 to=192.168.0.1 if=en0 <label=347078 tc=0x4 s=true ttl=1>  12.061771ms  34.364548ms
+	  9  72.14.232.129 tc=0x0 hops=245 to=192.168.0.1 if=en0 <label=24699 tc=0x4 s=true ttl=1>  41.402896ms
+	     209.85.248.129 tc=0x0 hops=245 to=192.168.0.1 if=en0 <label=24371 tc=0x4 s=true ttl=1>  42.836363ms
+	     209.85.249.53 tc=0x0 hops=245 to=192.168.0.1 if=en0 <label=25941 tc=0x4 s=true ttl=1>  42.692689ms
+	 10  72.14.235.71 tc=0x0 hops=246 to=192.168.0.1 if=en0  41.671242ms  41.603505ms
+	     72.14.235.77 tc=0x0 hops=246 to=192.168.0.1 if=en0  49.409008ms
+	 11  *  1.003972178s  1.004476507s  1.003024307s
+	 12  th-in-f141.1e100.net. (74.125.203.141) tc=0x0 hops=46 to=192.168.0.1 if=en0  44.859789ms  42.72805ms  42.288866ms
 
 
 Show network facility information
