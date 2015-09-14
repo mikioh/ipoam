@@ -248,16 +248,7 @@ func printRTReport(i int, hops []rtHop) {
 		if h.r.Src.IsUnspecified() {
 			fmt.Fprintf(bw, "*")
 		} else {
-			if rtNoRevLookup {
-				fmt.Fprintf(bw, "%v", h.r.Src)
-			} else {
-				name := revLookup(h.r.Src.String())
-				if name == "" {
-					fmt.Fprintf(bw, "%v", h.r.Src)
-				} else {
-					fmt.Fprintf(bw, "%s (%v)", name, h.r.Src)
-				}
-			}
+			fmt.Fprintf(bw, "%s", literalOrName(h.r.Src.String(), rtNoRevLookup))
 			if rtVerbose {
 				if h.r.Dst != nil {
 					fmt.Fprintf(bw, " tc=%#x hops=%d to=%v", h.r.TC, h.r.Hops, h.r.Dst)

@@ -5,6 +5,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"strings"
 	"time"
@@ -89,26 +90,29 @@ func newPrefix(ip net.IP) *ipaddr.Prefix {
 	return &p
 }
 
-func revLookup(address string) string {
+func literalOrName(s string, noRevLookup bool) string {
+	if noRevLookup {
+		return s
+	}
 	type racer struct {
 		names []string
 		error
 	}
 	lane := make(chan racer, 1)
 	go func() {
-		names, err := net.LookupAddr(address)
+		names, err := net.LookupAddr(s)
 		lane <- racer{names, err}
 	}()
 	t := time.NewTimer(500 * time.Millisecond)
 	defer t.Stop()
 	select {
 	case <-t.C:
-		return ""
+		return s
 	case r := <-lane:
 		if r.error != nil {
-			return ""
+			return s
 		}
-		return r.names[0]
+		return fmt.Sprintf("%s (%s)", r.names[0], s)
 	}
 }
 

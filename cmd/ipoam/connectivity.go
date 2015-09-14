@@ -45,11 +45,12 @@ var (
 	cvPayload []byte
 	cvData    = []byte("0123456789abcdefghijklmnopqrstuvwxyz")
 
-	cvIPv4only bool
-	cvIPv6only bool
-	cvQuiet    bool
-	cvXmitOnly bool
-	cvVerbose  bool
+	cvIPv4only    bool
+	cvIPv6only    bool
+	cvNoRevLookup bool
+	cvQuiet       bool
+	cvXmitOnly    bool
+	cvVerbose     bool
 
 	cvCount         int
 	cvHops          int
@@ -65,6 +66,7 @@ var (
 func init() {
 	cmdCV.Flag.BoolVar(&cvIPv4only, "4", false, "Run IPv4 test only")
 	cmdCV.Flag.BoolVar(&cvIPv6only, "6", false, "Run IPv6 test only")
+	cmdCV.Flag.BoolVar(&cvNoRevLookup, "n", false, "Don't use DNS reverse lookup")
 	cmdCV.Flag.BoolVar(&cvQuiet, "q", false, "Quiet output except summary")
 	cmdCV.Flag.BoolVar(&cvXmitOnly, "x", false, "Run transmission only")
 	cmdCV.Flag.BoolVar(&cvVerbose, "v", false, "Show verbose information")
@@ -317,21 +319,21 @@ func printCVReport(rtt time.Duration, r *ipoam.Report) {
 		return
 	}
 	if r.ICMP.Type != ipv4.ICMPTypeEchoReply && r.ICMP.Type != ipv6.ICMPTypeEchoReply {
-		fmt.Fprintf(bw, "from=%v icmp.type=%q icmp.code=%d rtt=%v\n", r.Src, r.ICMP.Type, r.ICMP.Code, rtt)
+		fmt.Fprintf(bw, "from=%s icmp.type=%q icmp.code=%d rtt=%v\n", literalOrName(r.Src.String(), cvNoRevLookup), r.ICMP.Type, r.ICMP.Code, rtt)
 		bw.Flush()
 		return
 	}
 	echo, _ := r.ICMP.Body.(*icmp.Echo)
 	fmt.Fprintf(bw, "%d bytes", len(echo.Data))
 	if !cvVerbose {
-		fmt.Fprintf(bw, " from=%v echo.seq=%d rtt=%v\n", r.Src, echo.Seq, rtt)
+		fmt.Fprintf(bw, " from=%s echo.seq=%d rtt=%v\n", literalOrName(r.Src.String(), cvNoRevLookup), echo.Seq, rtt)
 		bw.Flush()
 		return
 	}
 	if r.Dst == nil {
-		fmt.Fprintf(bw, " from=%v", r.Src)
+		fmt.Fprintf(bw, " from=%s", literalOrName(r.Src.String(), cvNoRevLookup))
 	} else {
-		fmt.Fprintf(bw, " tc=%#x hops=%d from=%v to=%v", r.TC, r.Hops, r.Src, r.Dst)
+		fmt.Fprintf(bw, " tc=%#x hops=%d from=%s to=%s", r.TC, r.Hops, literalOrName(r.Src.String(), cvNoRevLookup), literalOrName(r.Dst.String(), cvNoRevLookup))
 	}
 	if r.Interface != nil {
 		fmt.Fprintf(bw, " if=%s", r.Interface.Name)
@@ -352,7 +354,7 @@ func printCVSummary(dsts string, stats cvStats) {
 		} else {
 			st.minRTT = 0
 		}
-		fmt.Fprintf(bw, "%s:", ip)
+		fmt.Fprintf(bw, "%s:", literalOrName(ip, cvNoRevLookup))
 		if st.transmitted > 0 && st.received <= st.transmitted {
 			fmt.Fprintf(bw, " %.1f%% loss,", float64(st.transmitted-st.received)*100.0/float64(st.transmitted))
 		}
