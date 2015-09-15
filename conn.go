@@ -204,11 +204,12 @@ func newICMPConn(network, address string) (*conn, error) {
 		networks = []string{"ip6:ipv6-icmp", "udp6"}
 		conn.protocol = ianaProtocolIPv6ICMP
 	}
-	conn.c, err = net.ListenPacket(networks[0], address)
-	if err != nil {
+	var firstErr error
+	conn.c, firstErr = net.ListenPacket(networks[0], address)
+	if firstErr != nil {
 		conn.c, err = icmp.ListenPacket(networks[1], address)
 		if err != nil {
-			return nil, err
+			return nil, firstErr
 		}
 	}
 	return &conn, nil
