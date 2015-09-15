@@ -7,6 +7,7 @@ package ipoam
 import (
 	"fmt"
 	"net"
+	"syscall"
 
 	"golang.org/x/net/icmp"
 	"golang.org/x/net/ipv4"
@@ -35,6 +36,9 @@ type conn struct {
 }
 
 func (c *conn) close() error {
+	if c == nil || c.c == nil {
+		return syscall.EINVAL
+	}
 	return c.c.Close()
 }
 

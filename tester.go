@@ -10,6 +10,7 @@ import (
 	"os"
 	"runtime"
 	"sync"
+	"syscall"
 
 	"golang.org/x/net/icmp"
 	"golang.org/x/net/ipv4"
@@ -51,10 +52,14 @@ func (t *Tester) IPv6PacketConn() *ipv6.PacketConn {
 
 // Close closes the both maintenance and probe network connections.
 func (t *Tester) Close() error {
-	perr, merr := t.pconn.close(), t.mconn.close()
+	if t == nil || t.pconn == nil || t.mconn == nil {
+		return syscall.EINVAL
+	}
+	perr := t.pconn.close()
 	if t.pconn == t.mconn {
 		return perr
 	}
+	merr := t.mconn.close()
 	if perr != nil {
 		return perr
 	}
@@ -141,10 +146,14 @@ func NewTester(network, address string) (*Tester, error) {
 
 	switch network {
 	case "ip4:icmp", "ip4:1":
-		t.mconn, err = newMaintConn(network, t.pconn.ip.String())
-		if err != nil {
-			t.pconn.close()
-			return nil, err
+		if t.pconn.p4 != nil {
+			t.mconn = t.pconn
+		} else {
+			t.mconn, err = newMaintConn(network, t.pconn.ip.String())
+			if err != nil {
+				t.pconn.close()
+				return nil, err
+			}
 		}
 	case "ip6:ipv6-icmp", "ip6:58":
 		t.mconn = t.pconn
