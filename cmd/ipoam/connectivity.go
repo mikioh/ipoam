@@ -87,6 +87,8 @@ func cvMain(cmd *Command, args []string) {
 		cmd.Flag.Usage()
 	}
 
+	bw := bufio.NewWriter(os.Stdout)
+
 	c, ifi, err := parseDsts(args[0], cvIPv4only, cvIPv6only)
 	if err != nil {
 		cmd.fatal(err)
@@ -172,7 +174,7 @@ func cvMain(cmd *Command, args []string) {
 		}
 	}
 
-	printCVBanner(args[0], c)
+	printCVBanner(bw, args[0], c)
 
 	stats := make(cvStats)
 	sig := make(chan os.Signal)
@@ -189,7 +191,7 @@ func cvMain(cmd *Command, args []string) {
 				onlink.Error = ipts[0].t.Probe(cvPayload, &cm, pos.IP, ifi)
 				stats.get(pos.IP.String()).onDeparture(&onlink)
 				if onlink.Error != nil {
-					printCVReport(0, &onlink)
+					printCVReport(bw, 0, &onlink)
 					continue
 				}
 			}
@@ -197,7 +199,7 @@ func cvMain(cmd *Command, args []string) {
 				onlink.Error = ipts[1].t.Probe(cvPayload, &cm, pos.IP, ifi)
 				stats.get(pos.IP.String()).onDeparture(&onlink)
 				if onlink.Error != nil {
-					printCVReport(0, &onlink)
+					printCVReport(bw, 0, &onlink)
 					continue
 				}
 			}
@@ -209,25 +211,25 @@ func cvMain(cmd *Command, args []string) {
 			select {
 			case <-sig:
 				if cvVerbose {
-					printCVSummary(args[0], stats)
+					printCVSummary(bw, args[0], stats)
 				}
 				os.Exit(0)
 			case <-t.C:
 				break loop
 			case r := <-ipts[0].r:
 				rtt := r.Time.Sub(begin)
-				printCVReport(rtt, &r)
+				printCVReport(bw, rtt, &r)
 				stats.get(r.Src.String()).onArrival(rtt, &r)
 			case r := <-ipts[1].r:
 				rtt := r.Time.Sub(begin)
-				printCVReport(rtt, &r)
+				printCVReport(bw, rtt, &r)
 				stats.get(r.Src.String()).onArrival(rtt, &r)
 			}
 		}
 
 		if cvCount > 0 && i == cvCount {
 			if cvVerbose {
-				printCVSummary(args[0], stats)
+				printCVSummary(bw, args[0], stats)
 			}
 			os.Exit(0)
 		}
@@ -284,8 +286,7 @@ func (st *cvStat) onDeparture(r *ipoam.Report) {
 	}
 }
 
-func printCVBanner(dsts string, c *ipaddr.Cursor) {
-	bw := bufio.NewWriter(os.Stdout)
+func printCVBanner(bw *bufio.Writer, dsts string, c *ipaddr.Cursor) {
 	fmt.Fprintf(bw, "Connectivity verification for %s", dsts)
 	if cvVerbose {
 		fmt.Fprintf(bw, " [")
@@ -308,11 +309,10 @@ func printCVBanner(dsts string, c *ipaddr.Cursor) {
 	bw.Flush()
 }
 
-func printCVReport(rtt time.Duration, r *ipoam.Report) {
+func printCVReport(bw *bufio.Writer, rtt time.Duration, r *ipoam.Report) {
 	if cvQuiet {
 		return
 	}
-	bw := bufio.NewWriter(os.Stdout)
 	if r.Error != nil {
 		fmt.Fprintf(bw, "error=%q\n", r.Error)
 		bw.Flush()
@@ -342,8 +342,7 @@ func printCVReport(rtt time.Duration, r *ipoam.Report) {
 	bw.Flush()
 }
 
-func printCVSummary(dsts string, stats cvStats) {
-	bw := bufio.NewWriter(os.Stdout)
+func printCVSummary(bw *bufio.Writer, dsts string, stats cvStats) {
 	fmt.Fprintf(bw, "\nStatistical information for %s:\n", dsts)
 	for ip, st := range stats {
 		var avg time.Duration

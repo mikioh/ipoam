@@ -82,6 +82,8 @@ func rtMain(cmd *Command, args []string) {
 		cmd.Flag.Usage()
 	}
 
+	bw := bufio.NewWriter(os.Stdout)
+
 	c, ifi, err := parseDsts(args[0], rtIPv4only, rtIPv6only)
 	if err != nil {
 		cmd.fatal(err)
@@ -169,7 +171,7 @@ func rtMain(cmd *Command, args []string) {
 		cmd.fatal(fmt.Errorf("destination for %s not found", args[0]))
 	}
 
-	printRTBanner(args[0], c, dst)
+	printRTBanner(bw, args[0], c, dst)
 
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
@@ -212,7 +214,7 @@ func rtMain(cmd *Command, args []string) {
 			}
 		}
 
-		printRTReport(i, hops)
+		printRTReport(bw, i, hops)
 		if hasReached(&r) {
 			break
 		}
@@ -220,8 +222,7 @@ func rtMain(cmd *Command, args []string) {
 	os.Exit(0)
 }
 
-func printRTBanner(dsts string, c *ipaddr.Cursor, pos *ipaddr.Position) {
-	bw := bufio.NewWriter(os.Stdout)
+func printRTBanner(bw *bufio.Writer, dsts string, c *ipaddr.Cursor, pos *ipaddr.Position) {
 	fmt.Fprintf(bw, "Path discovery for %s: %d hops max, %d per-hop probes, %d bytes payload\n", dsts, rtMaxHops, rtPerHopProbeCount, len(rtPayload))
 	if len(c.List()) > 1 {
 		fmt.Fprintf(bw, "Warning: %s has multiple addresses, using %v\n", dsts, pos.IP)
@@ -229,9 +230,8 @@ func printRTBanner(dsts string, c *ipaddr.Cursor, pos *ipaddr.Position) {
 	bw.Flush()
 }
 
-func printRTReport(i int, hops []rtHop) {
+func printRTReport(bw *bufio.Writer, i int, hops []rtHop) {
 	sort.Sort(rtHops(hops))
-	bw := bufio.NewWriter(os.Stdout)
 	fmt.Fprintf(bw, "% 3d  ", i)
 	var prev net.IP
 	for _, h := range hops {
