@@ -178,6 +178,7 @@ func rtMain(cmd *Command, args []string) {
 	cm := ipoam.ControlMessage{ID: os.Getpid() & 0xffff, Seq: 1, Port: rtPort}
 	hops := make([]rtHop, 0)
 	for i := 1; i <= rtMaxHops; i++ {
+		var reached bool
 		var r ipoam.Report
 		hops = hops[:0]
 
@@ -212,10 +213,13 @@ func rtMain(cmd *Command, args []string) {
 			case r = <-ipt.Report():
 				hops = append(hops, rtHop{rtt: r.Time.Sub(begin), r: r})
 			}
+			if !reached {
+				reached = hasReached(&r)
+			}
 		}
 
 		printRTReport(bw, i, hops)
-		if hasReached(&r) {
+		if reached {
 			break
 		}
 	}
