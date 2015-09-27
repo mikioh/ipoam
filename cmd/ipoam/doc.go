@@ -65,8 +65,8 @@ A sample output:
 
 Discover an IP-layer path
 
-RT (Route Trace) transmits probe packets and discovers a route to the
-destination by determining received ICMP error messages from nodes
+RT (Route Tracing) transmits probe packets and discovers a route to
+the destination by determining received ICMP error messages from nodes
 along the route. The probe packets can be carried by either UDP or
 ICMP.
 
