@@ -173,7 +173,7 @@ func rtMain(cmd *Command, args []string) {
 
 	printRTBanner(bw, args[0], c, dst)
 
-	sig := make(chan os.Signal)
+	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	cm := ipoam.ControlMessage{ID: os.Getpid() & 0xffff, Seq: 1, Port: rtPort}
 	hops := make([]rtHop, 0)

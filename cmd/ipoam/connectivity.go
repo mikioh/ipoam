@@ -177,7 +177,7 @@ func cvMain(cmd *Command, args []string) {
 	printCVBanner(bw, args[0], c)
 
 	stats := make(cvStats)
-	sig := make(chan os.Signal)
+	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	var onlink ipoam.Report
 	cm := ipoam.ControlMessage{ID: os.Getpid() & 0xffff}
