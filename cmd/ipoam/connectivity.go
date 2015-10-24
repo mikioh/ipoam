@@ -183,7 +183,6 @@ func cvMain(cmd *Command, args []string) {
 	cm := ipoam.ControlMessage{ID: os.Getpid() & 0xffff}
 	for i := 1; ; i++ {
 		t := time.NewTimer(time.Duration(cvWait) * time.Second)
-		defer t.Stop()
 		begin := time.Now()
 		cm.Seq = i
 		for pos := c.First(); pos != nil; pos = c.Next() {
@@ -226,6 +225,7 @@ func cvMain(cmd *Command, args []string) {
 				stats.get(r.Src.String()).onArrival(rtt, &r)
 			}
 		}
+		t.Stop()
 
 		if cvCount > 0 && i == cvCount {
 			if cvVerbose {

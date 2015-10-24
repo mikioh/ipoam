@@ -184,7 +184,6 @@ func rtMain(cmd *Command, args []string) {
 
 		for j := 0; j < rtPerHopProbeCount; j++ {
 			t := time.NewTimer(time.Duration(rtWait) * time.Second)
-			defer t.Stop()
 			begin := time.Now()
 			if !rtIPv6only && dst.IP.To4() != nil {
 				ipt.IPv4PacketConn().SetTTL(i)
@@ -216,6 +215,7 @@ func rtMain(cmd *Command, args []string) {
 			if !reached {
 				reached = hasReached(&r)
 			}
+			t.Stop()
 		}
 
 		printRTReport(bw, i, hops)
