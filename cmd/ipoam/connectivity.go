@@ -355,7 +355,7 @@ func printCVSummary(bw *bufio.Writer, dsts string, stats cvStats) {
 		}
 		fmt.Fprintf(bw, "%s:", literalOrName(ip, cvNoRevLookup))
 		if st.transmitted > 0 && st.received <= st.transmitted {
-			fmt.Fprintf(bw, " %.1f%% loss,", float64(st.transmitted-st.received)*100.0/float64(st.transmitted))
+			fmt.Fprintf(bw, " loss=%.1f%%", float64(st.transmitted-st.received)*100.0/float64(st.transmitted))
 		}
 		fmt.Fprintf(bw, " rcvd=%d sent=%d op.err=%d icmp.err=%d", st.received, st.transmitted, st.opErrors, st.icmpErrors)
 		fmt.Fprintf(bw, " min=%v avg=%v max=%v stddev=%v\n", st.minRTT, avg, st.maxRTT, time.Duration(stddev))
