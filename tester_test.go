@@ -38,7 +38,8 @@ func TestTesterGlobalUnicast(t *testing.T) {
 		cm := ipoam.ControlMessage{ID: os.Getpid()&0xffff + i, Port: 33434}
 		ipt, err := ipoam.NewTester(tt.network, tt.address)
 		if err != nil {
-			t.Fatal(err)
+			t.Log(err)
+			continue
 		}
 		defer ipt.Close()
 
@@ -119,7 +120,8 @@ func TestTesterLinkLocalMulticast(t *testing.T) {
 		cm := ipoam.ControlMessage{ID: os.Getpid()&0xffff + i}
 		ipt, err := ipoam.NewTester(tt.network, tt.address)
 		if err != nil {
-			t.Fatal(err)
+			t.Log(err)
+			continue
 		}
 		defer ipt.Close()
 
