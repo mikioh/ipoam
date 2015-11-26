@@ -54,14 +54,19 @@ Flags:
 
 A sample output:
 
-	% sudo ipoam cv -v -4 -count=3 golang.org
-	Connectivity verification for golang.org [74.125.203.141]: 56 bytes payload
-	56 bytes tc=0x0 hops=46 from=th-in-f141.1e100.net. (74.125.203.141) to=192.168.0.1 if=en0 echo.id=17278 echo.seq=1 rtt=44.323195ms
-	56 bytes tc=0x0 hops=46 from=th-in-f141.1e100.net. (74.125.203.141) to=192.168.0.1 if=en0 echo.id=17278 echo.seq=2 rtt=43.952098ms
-	56 bytes tc=0x0 hops=46 from=th-in-f141.1e100.net. (74.125.203.141) to=192.168.0.1 if=en0 echo.id=17278 echo.seq=3 rtt=40.670227ms
+	% sudo ipoam cv -v -count=3 golang.org
+	Connectivity verification for golang.org [216.58.220.241 2404:6800:4004:814::2011]: 56 bytes payload
+	56 bytes tc=0x0 hops=56 from=nrt13s37-in-f17.1e100.net. (216.58.220.241) to=192.168.0.3 if=en0 echo.id=30896 echo.seq=1 rtt=44.303633ms
+	56 bytes tc=0x0 hops=56 from=nrt13s37-in-x11.1e100.net. (2404:6800:4004:814::2011) to=240f:6d:3e21:1:9c02:d0d6:e40d:5341 if=en0 echo.id=30896 echo.seq=1 rtt=46.89151ms
+	56 bytes tc=0x0 hops=56 from=nrt13s37-in-f17.1e100.net. (216.58.220.241) to=192.168.0.3 if=en0 echo.id=30896 echo.seq=2 rtt=17.458021ms
+	56 bytes tc=0x0 hops=56 from=nrt13s37-in-x11.1e100.net. (2404:6800:4004:814::2011) to=240f:6d:3e21:1:9c02:d0d6:e40d:5341 if=en0 echo.id=30896 echo.seq=2 rtt=18.313848ms
+	56 bytes tc=0x0 hops=56 from=nrt13s37-in-f17.1e100.net. (216.58.220.241) to=192.168.0.3 if=en0 echo.id=30896 echo.seq=3 rtt=15.882498ms
+	56 bytes tc=0x0 hops=56 from=nrt13s37-in-x11.1e100.net. (2404:6800:4004:814::2011) to=240f:6d:3e21:1:9c02:d0d6:e40d:5341 if=en0 echo.id=30896 echo.seq=3 rtt=36.196468ms
 
 	Statistical information for golang.org:
-	th-in-f141.1e100.net. (74.125.203.141): 0.0% loss, rcvd=3 sent=3 op.err=0 icmp.err=0 min=40.670227ms avg=42.98184ms max=44.323195ms stddev=1.641563ms
+	nrt13s37-in-f17.1e100.net. (216.58.220.241): loss=0.0% rcvd=3 sent=3 op.err=0 icmp.err=0 min=15.882498ms avg=25.881384ms max=44.303633ms stddev=13.042367ms
+	nrt13s37-in-x11.1e100.net. (2404:6800:4004:814::2011): loss=0.0% rcvd=3 sent=3 op.err=0 icmp.err=0 min=18.313848ms avg=33.800608ms max=46.89151ms stddev=11.789143ms
+
 
 Discover an IP-layer path
 
@@ -100,24 +105,19 @@ Flags:
 
 A sample output:
 
-	% sudo ipoam rt -v golang.org
-	Path discovery for golang.org: 30 hops max, 3 per-hop probes, 56 bytes payload
-	Warning: golang.org has multiple addresses, using 173.194.72.141
-	  1  192.168.0.254 tc=0x0 hops=255 to=192.168.0.1 if=en1  6.881108ms  1.259877ms  1.216255ms
-	  2  *  1.002800195s  1.004971212s  1.001800509s
+	% sudo ipoam rt -v www.as112.net
+	Path discovery for www.as112.net: 30 hops max, 3 per-hop probes, 56 bytes payload
+	Warning: www.as112.net has multiple addresses, using 149.20.58.198
+	  1  192.168.0.1 tc=0x0 hops=255 to=192.168.0.3 if=en0  7.715428ms  1.882559ms  1.349216ms
 	[...]
-	  6  72.14.204.58 tc=0x0 hops=250 to=192.168.0.1 if=en0  8.187242ms  7.70626ms  8.196697ms
-	  7  72.14.236.82 tc=0x0 hops=249 to=192.168.0.1 if=en0  8.107614ms
-	     72.14.239.202 tc=0x0 hops=249 to=192.168.0.1 if=en0  8.463247ms  8.128451ms
-	  8  72.14.239.55 tc=0x0 hops=244 to=192.168.0.1 if=en0 <label=29135 tc=0x4 s=true ttl=1>  44.717919ms
-	     209.85.255.34 tc=0x0 hops=246 to=192.168.0.1 if=en0 <label=347078 tc=0x4 s=true ttl=1>  12.061771ms  34.364548ms
-	  9  72.14.232.129 tc=0x0 hops=245 to=192.168.0.1 if=en0 <label=24699 tc=0x4 s=true ttl=1>  41.402896ms
-	     209.85.248.129 tc=0x0 hops=245 to=192.168.0.1 if=en0 <label=24371 tc=0x4 s=true ttl=1>  42.836363ms
-	     209.85.249.53 tc=0x0 hops=245 to=192.168.0.1 if=en0 <label=25941 tc=0x4 s=true ttl=1>  42.692689ms
-	 10  72.14.235.71 tc=0x0 hops=246 to=192.168.0.1 if=en0  41.671242ms  41.603505ms
-	     72.14.235.77 tc=0x0 hops=246 to=192.168.0.1 if=en0  49.409008ms
-	 11  *  1.003972178s  1.004476507s  1.003024307s
-	 12  th-in-f141.1e100.net. (74.125.203.141) tc=0x0 hops=46 to=192.168.0.1 if=en0  44.859789ms  42.72805ms  42.288866ms
+	  7  ae1.mpr2.pao1.us.zip.zayo.com. (64.125.14.33) tc=0x0 hops=247 to=192.168.0.3 if=en0  113.875371ms  117.308859ms  120.627108ms
+	  8  64.125.25.165 tc=0x0 hops=246 to=192.168.0.3 if=en0  137.852291ms  126.503729ms  138.970751ms
+	  9  isc-above-oc3.pao.isc.org. (216.200.0.10) tc=0x0 hops=247 to=192.168.0.3 if=en0  124.94996ms  117.130496ms  115.594481ms
+	 10  int-0-1-0-0.r1.pao1.isc.org. (149.20.65.20) tc=0x0 hops=246 to=192.168.0.3 if=en0 <label=289970 tc=0x0 s=true ttl=255>  184.430375ms  172.277626ms
+	     149.20.65.22 tc=0x0 hops=246 to=192.168.0.3 if=en0 <label=289970 tc=0x0 s=true ttl=255>  123.429594ms
+	 11  int-0-0-1-0.r1.sql1.isc.org. (149.20.65.10) tc=0x0 hops=247 to=192.168.0.3 if=en0  161.092584ms  146.05843ms  119.608538ms
+	 12  149.20.56.156 tc=0x0 hops=246 to=192.168.0.3 if=en0  142.293248ms  121.059763ms  118.12153ms
+	 13  ix1.dns-oarc.net. (149.20.58.198) tc=0x0 hops=54 to=192.168.0.3 if=en0  117.361415ms  130.268473ms  119.191445ms
 
 
 Show network facility information
