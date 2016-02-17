@@ -142,6 +142,8 @@ func (t *maint) monitor(c *conn) {
 			if cookie == mcookie {
 				t.writeReport(&r)
 			}
+		default: // e.g., ianaProtocolIPv6Frag
+			t.writeReport(&r)
 		}
 	}
 }
