@@ -216,11 +216,11 @@ func cvMain(cmd *Command, args []string) {
 			case <-t.C:
 				break loop
 			case r := <-ipts[0].r:
-				rtt := r.Time.Sub(begin)
+				rtt := time.Since(begin)
 				printCVReport(bw, rtt, &r)
 				stats.get(r.Src.String()).onArrival(rtt, &r)
 			case r := <-ipts[1].r:
-				rtt := r.Time.Sub(begin)
+				rtt := time.Since(begin)
 				printCVReport(bw, rtt, &r)
 				stats.get(r.Src.String()).onArrival(rtt, &r)
 			}

@@ -210,7 +210,7 @@ func rtMain(cmd *Command, args []string) {
 			case <-t.C:
 				hops = append(hops, rtHop{rtt: time.Since(begin), r: ipoam.Report{Src: net.IPv6unspecified}})
 			case r = <-ipt.Report():
-				hops = append(hops, rtHop{rtt: r.Time.Sub(begin), r: r})
+				hops = append(hops, rtHop{rtt: time.Since(begin), r: r})
 			}
 			if !reached {
 				reached = hasReached(&r)
