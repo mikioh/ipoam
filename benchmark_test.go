@@ -15,12 +15,14 @@ import (
 func BenchmarkTesterGoogleIPv4(b *testing.B) {
 	ipt, err := ipoam.NewTester("ip4:icmp", "0.0.0.0")
 	if err != nil {
-		b.Fatal(err)
+		b.Log(err)
+		return
 	}
 	defer ipt.Close()
 	ips, err := net.LookupIP("ipv4.google.com")
 	if err != nil {
-		b.Fatal(err)
+		b.Log(err)
+		return
 	}
 	benchmarkLoopbackGoogle(b, ipt, ips[0])
 }
@@ -28,12 +30,14 @@ func BenchmarkTesterGoogleIPv4(b *testing.B) {
 func BenchmarkTesterGoogleIPv6(b *testing.B) {
 	ipt, err := ipoam.NewTester("ip6:ipv6-icmp", "::")
 	if err != nil {
-		b.Fatal(err)
+		b.Log(err)
+		return
 	}
 	defer ipt.Close()
 	ips, err := net.LookupIP("ipv6.google.com")
 	if err != nil {
-		b.Fatal(err)
+		b.Log(err)
+		return
 	}
 	benchmarkLoopbackGoogle(b, ipt, ips[0])
 }
