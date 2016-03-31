@@ -13,3 +13,6 @@ script:
 - go test -v -run=none -bench=. -benchmem
 - cd cmd/ipoam
 - go test -v
+
+notifications:
+  email: false
