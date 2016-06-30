@@ -105,16 +105,29 @@ Flags:
 
 A sample output:
 
-	% sudo ipoam rt -v www.as112.net
-	Path discovery for www.as112.net: 30 hops max, 3 per-hop probes, 56 bytes payload
-	Warning: www.as112.net has multiple addresses, using 149.20.58.198
-	  1  onhub.here. (192.168.86.1) tc=0xc0 hops=64 to=192.168.86.23 if=en0  11.039045ms  4.42153ms  1.338854ms
-	 14  int-0-0-1-0.r1.sql1.isc.org. (149.20.65.10) tc=0x0 hops=242 to=192.168.86.23 if=en0  120.675621ms  123.244983ms
-	     int-0-1-0-1.r1.pao1.isc.org. (149.20.65.22) tc=0x0 hops=241 to=192.168.86.23 if=en0 <label=289970 tc=0x0 s=true ttl=255>  118.908109ms
-	 15  149.20.56.156 tc=0x0 hops=241 to=192.168.86.23 if=en0  119.487097ms
-	     int-0-0-1-0.r1.sql1.isc.org. (149.20.65.10) tc=0x0 hops=242 to=192.168.86.23 if=en0  118.258953ms  119.722504ms
-	 16  149.20.56.156 tc=0x0 hops=241 to=192.168.86.23 if=en0  117.149574ms
-	     ix1.dns-oarc.net. (149.20.58.198) tc=0xc0 hops=49 to=192.168.86.23 if=en0  120.063393ms  117.426795ms
+	% sudo ipoam rt -v go.googlesource.com
+	Path discovery for go.googlesource.com: 30 hops max, 3 per-hop probes, 56 bytes payload
+	Warning: go.googlesource.com has multiple addresses, using 74.125.204.82
+	  1  onhub.here. (192.168.86.1) tc=0xc0 hops=64 to=192.168.86.21 if=en0  2.695846ms  1.688351ms  1.693493ms
+	(snip)
+	 10  64.233.175.216 tc=0x0 hops=244 to=192.168.86.21 if=en0 <label=313981 tc=0x4 s=true ttl=1>  16.56388ms
+	     209.85.243.141 tc=0x0 hops=242 to=192.168.86.21 if=en0 <label=333837 tc=0x4 s=true ttl=1>  12.942727ms
+	     216.239.58.125 tc=0x0 hops=244 to=192.168.86.21 if=en0 <label=28780 tc=0x4 s=true ttl=1>  13.788517ms
+	 11  72.14.233.137 tc=0x0 hops=243 to=192.168.86.21 if=en0 <label=453893 tc=0x4 s=true ttl=1>  59.242244ms
+	     72.14.235.147 tc=0x0 hops=243 to=192.168.86.21 if=en0 <label=506193 tc=0x4 s=true ttl=1>  54.463109ms
+	     209.85.249.53 tc=0x0 hops=243 to=192.168.86.21 if=en0 <label=28468 tc=0x4 s=true ttl=1>  53.522524ms
+	 12  209.85.247.57 tc=0x0 hops=242 to=192.168.86.21 if=en0  42.756837ms
+	     209.85.248.241 tc=0x0 hops=242 to=192.168.86.21 if=en0  46.520701ms
+	     209.85.249.95 tc=0x0 hops=244 to=192.168.86.21 if=en0  43.928487ms
+	 13  *  1.004972957s  1.003680805s  1.003223922s
+	 14  *  1.001087842s  1.004097867s  1.004458466s
+	 15  *  1.003139488s  1.002801011s  1.003656251s
+	 16  *  1.001378876s  1.002778971s  1.001974821s
+	 17  *  1.004971673s  1.004954549s  1.003209327s
+	 18  *  1.000706913s  1.001947528s  1.000282281s
+	 19  *  1.003725125s  1.000022246s  1.001842931s
+	 20  *  1.003906987s  1.001953641s  1.000027483s
+	 21  ti-in-f82.1e100.net. (74.125.204.82) tc=0x0 hops=42 to=192.168.86.21 if=en0  47.809163ms  66.017916ms  43.068939ms
 
 
 Show network facility information

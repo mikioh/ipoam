@@ -4,7 +4,7 @@
 
 /*
 Package ipoam implements helper functions for IP-layer Operations,
-Administration, and Maintenance (OAM) functions.
+Administration, and Maintenance (OAM) tools.
 See RFC 6291 and RFC 7276 for further information.
 */
 package ipoam
