@@ -21,7 +21,7 @@ type Report struct {
 	Src   net.IP        // source address on received packet
 	ICMP  *icmp.Message // received ICMP message
 
-	// Original datagram fields when ICMP is a error message.
+	// Original datagram fields when ICMP is an error message.
 	OrigHeader  interface{} // IP header, either ipv4.Header or ipv6.Header
 	OrigPayload []byte      // IP payload
 
