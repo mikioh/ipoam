@@ -136,7 +136,7 @@ func (t *Tester) Probe(b []byte, cm *ControlMessage, ip net.IP, ifi *net.Interfa
 //	NewTester("udp", "0.0.0.0")
 //	NewTester("ip6:58", "2001:db8::1")
 func NewTester(network, address string) (*Tester, error) {
-	t := Tester{maint: maint{emitReport: true, report: make(chan Report, 1)}}
+	t := Tester{maint: maint{emitReport: 1, report: make(chan Report, 1)}}
 
 	var err error
 	t.pconn, err = newProbeConn(network, address)

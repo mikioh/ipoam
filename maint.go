@@ -7,7 +7,7 @@ package ipoam
 import (
 	"net"
 	"runtime"
-	"sync"
+	"sync/atomic"
 	"time"
 
 	"golang.org/x/net/icmp"
@@ -33,25 +33,17 @@ func udpCookie(protocol, sport, dport int) cookie {
 
 // A maint represents a maintenance endpoint.
 type maint struct {
-	report chan Report // buffered report channel
-
-	cookieMu sync.RWMutex
-	cookie   cookie
-
-	reportMu   sync.RWMutex
-	emitReport bool
+	cookie     uint64
+	emitReport int32
+	report     chan Report // buffered report channel
 }
 
 func (t *maint) setICMPCookie(protocol, id, seq int) {
-	t.cookieMu.Lock()
-	t.cookie = icmpCookie(protocol, id, seq)
-	t.cookieMu.Unlock()
+	atomic.StoreUint64(&t.cookie, uint64(icmpCookie(protocol, id, seq)))
 }
 
 func (t *maint) setUDPCookie(protocol, sport, dport int) {
-	t.cookieMu.Lock()
-	t.cookie = udpCookie(protocol, sport, dport)
-	t.cookieMu.Unlock()
+	atomic.StoreUint64(&t.cookie, uint64(udpCookie(protocol, sport, dport)))
 }
 
 func (t *maint) monitor(c *conn) {
@@ -102,9 +94,7 @@ func (t *maint) monitor(c *conn) {
 		}
 
 		r.ICMP = m
-		t.cookieMu.RLock()
-		mcookie := t.cookie
-		t.cookieMu.RUnlock()
+		mcookie := cookie(atomic.LoadUint64(&t.cookie))
 
 		if r.ICMP.Type == ipv4.ICMPTypeEchoReply || r.ICMP.Type == ipv6.ICMPTypeEchoReply {
 			cookie := icmpCookie(c.protocol, m.Body.(*icmp.Echo).ID, m.Body.(*icmp.Echo).Seq)
@@ -149,11 +139,10 @@ func (t *maint) monitor(c *conn) {
 }
 
 func (t *maint) writeReport(r *Report) {
-	t.reportMu.RLock()
-	if t.emitReport {
+	emit := atomic.LoadInt32(&t.emitReport)
+	if emit > 0 {
 		t.report <- *r
 	}
-	t.reportMu.RUnlock()
 }
 
 // Report returns the buffered test report channel.
@@ -163,14 +152,10 @@ func (t *maint) Report() <-chan Report {
 
 // StartReport enables emitting test reports.
 func (t *maint) StartReport() {
-	t.reportMu.Lock()
-	t.emitReport = true
-	t.reportMu.Unlock()
+	atomic.StoreInt32(&t.emitReport, 1)
 }
 
 // StopReport disables emitting test reports.
 func (t *maint) StopReport() {
-	t.reportMu.Lock()
-	t.emitReport = false
-	t.reportMu.Unlock()
+	atomic.StoreInt32(&t.emitReport, 0)
 }
