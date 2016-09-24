@@ -71,7 +71,7 @@ func init() {
 	cmdCV.Flag.BoolVar(&cvXmitOnly, "x", false, "Run transmission only")
 	cmdCV.Flag.BoolVar(&cvVerbose, "v", false, "Show verbose information")
 
-	cmdCV.Flag.IntVar(&cvCount, "count", 0, "Iteration count, less than or equal to zero will run until interruped")
+	cmdCV.Flag.IntVar(&cvCount, "count", 0, "Iteration count, less than or equal to zero will run until interrupted")
 	cmdCV.Flag.IntVar(&cvHops, "hops", 64, "IPv4 TTL or IPv6 hop-limit on outgoing unicast packets")
 	cmdCV.Flag.IntVar(&cvMulticastHops, "mchops", 5, "IPv4 TTL or IPv6 hop-limit on outgoing multicast packets")
 	cmdCV.Flag.IntVar(&cvTC, "tc", 0, "IPv4 TOS or IPv6 traffic-class on outgoing packets")

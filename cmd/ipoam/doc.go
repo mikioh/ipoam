@@ -3,8 +3,8 @@
 // license that can be found in the LICENSE file.
 
 /*
-IPOAM verifies IP-layer connectivity and discovers an IP-layer path
-like ping and traceroute commands.
+Command ipoam verifies IP-layer connectivity and discovers an IP-layer
+path like ping and traceroute commands.
 
 Usage:	ipoam command [flags] [arguments]
 
@@ -32,7 +32,7 @@ Flags:
 	-4	Run IPv4 test only
 	-6	Run IPv6 test only
 	-count int
-		Iteration count, less than or equal to zero will run until interruped
+		Iteration count, less than or equal to zero will run until interrupted
 	-hops int
 		IPv4 TTL or IPv6 hop-limit on outgoing unicast packets (default 64)
 	-if string
