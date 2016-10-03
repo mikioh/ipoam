@@ -71,10 +71,15 @@ func (t *maint) monitor(c *conn) {
 		switch h := h.(type) {
 		case *ipv4.Header:
 			r.TC = h.TOS
+			if runtime.GOOS == "solaris" {
+				r.Hops = h.TTL
+			}
 		}
 		switch cm := cm.(type) {
 		case *ipv4.ControlMessage:
-			r.Hops = cm.TTL
+			if runtime.GOOS != "solaris" {
+				r.Hops = cm.TTL
+			}
 			r.Dst = cm.Dst
 			ifi, _ := net.InterfaceByIndex(cm.IfIndex)
 			r.Interface = ifi

@@ -182,10 +182,16 @@ func NewTester(network, address string) (*Tester, error) {
 				t.mconn.p4.SetICMPFilter(&f)
 			}
 		}
+		f := ipv4.FlagSrc | ipv4.FlagDst | ipv4.FlagInterface
+		if runtime.GOOS != "solaris" {
+			// It looks like IP_RECVTTL doesn't work well
+			// on Solaris.
+			f |= ipv4.FlagTTL
+		}
 		if t.mconn.r4 != nil {
-			t.mconn.r4.SetControlMessage(ipv4.FlagTTL|ipv4.FlagSrc|ipv4.FlagDst|ipv4.FlagInterface, true)
+			t.mconn.r4.SetControlMessage(f, true)
 		} else {
-			t.mconn.p4.SetControlMessage(ipv4.FlagTTL|ipv4.FlagSrc|ipv4.FlagDst|ipv4.FlagInterface, true)
+			t.mconn.p4.SetControlMessage(f, true)
 		}
 	}
 	if t.mconn.ip.To16() != nil && t.mconn.ip.To4() == nil {
