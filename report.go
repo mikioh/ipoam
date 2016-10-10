@@ -5,6 +5,7 @@
 package ipoam
 
 import (
+	"encoding/binary"
 	"fmt"
 	"net"
 	"time"
@@ -86,5 +87,5 @@ func parseOrigUDP(b []byte) (sport, dport int) {
 	if len(b) < 8 {
 		return -1, -1
 	}
-	return int(b[0])<<8 | int(b[1]), int(b[2])<<8 | int(b[3])
+	return int(binary.BigEndian.Uint16(b[:2])), int(binary.BigEndian.Uint16(b[2:4]))
 }
