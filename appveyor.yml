@@ -11,6 +11,3 @@ install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - mkdir c:\gopath
   - go get github.com/mikioh/ipoam
-
-build_script:
-  - go test -v -race
