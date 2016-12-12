@@ -14,3 +14,5 @@ install:
 
 build_script:
   - go test -v -race
+  - cd cmd/ipoam
+  - go test -v
