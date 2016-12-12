@@ -77,18 +77,22 @@ func (t *maint) monitor(c *conn) {
 		}
 		switch cm := cm.(type) {
 		case *ipv4.ControlMessage:
-			if runtime.GOOS != "solaris" {
-				r.Hops = cm.TTL
+			if cm != nil {
+				if runtime.GOOS != "solaris" {
+					r.Hops = cm.TTL
+				}
+				r.Dst = cm.Dst
+				ifi, _ := net.InterfaceByIndex(cm.IfIndex)
+				r.Interface = ifi
 			}
-			r.Dst = cm.Dst
-			ifi, _ := net.InterfaceByIndex(cm.IfIndex)
-			r.Interface = ifi
 		case *ipv6.ControlMessage:
-			r.TC = cm.TrafficClass
-			r.Hops = cm.HopLimit
-			r.Dst = cm.Dst
-			ifi, _ := net.InterfaceByIndex(cm.IfIndex)
-			r.Interface = ifi
+			if cm != nil {
+				r.TC = cm.TrafficClass
+				r.Hops = cm.HopLimit
+				r.Dst = cm.Dst
+				ifi, _ := net.InterfaceByIndex(cm.IfIndex)
+				r.Interface = ifi
+			}
 		}
 
 		m, err := icmp.ParseMessage(c.protocol, rb)
