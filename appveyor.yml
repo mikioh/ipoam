@@ -11,6 +11,7 @@ install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - mkdir c:\gopath
   - go get github.com/mikioh/ipoam
+  - go get github.com/mikioh/ipaddr
 
 build_script:
   - go test -v -race
