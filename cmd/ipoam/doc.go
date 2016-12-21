@@ -23,7 +23,7 @@ Also it can be a single or multiple addresses.
 
 Usage:	ipoam cv|ping [flags] destination
 
-destination
+Destination:
 	A hostname, DNS reg-name, IP address, IP address prefix, or
 	comma-separated list of IP addresses and/or IP address prefixes.
 	A combination of unicast and multicast addresses is prohibited.
@@ -77,7 +77,7 @@ ICMP.
 
 Usage:	ipoam rt|pathdisc|traceroute [flags] destination
 
-destination
+Destination:
 	A hostname, DNS reg-name or IP address.
 
 Flags:
