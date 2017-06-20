@@ -135,8 +135,8 @@ func rtMain(cmd *Command, args []string) {
 				cmd.fatal(err)
 			}
 			defer ipt.Close()
-			if rtTC >= 0 {
-				ipt.IPv4PacketConn().SetTOS(rtTC)
+			if p := ipt.IPv4PacketConn(); p != nil && rtTC >= 0 {
+				p.SetTOS(rtTC)
 			}
 			dst = pos
 			break
@@ -159,8 +159,8 @@ func rtMain(cmd *Command, args []string) {
 				cmd.fatal(err)
 			}
 			defer ipt.Close()
-			if rtTC >= 0 {
-				ipt.IPv6PacketConn().SetTrafficClass(rtTC)
+			if p := ipt.IPv6PacketConn(); p != nil && rtTC >= 0 {
+				p.SetTrafficClass(rtTC)
 			}
 			dst = pos
 			break
@@ -185,11 +185,11 @@ func rtMain(cmd *Command, args []string) {
 		for j := 0; j < rtPerHopProbeCount; j++ {
 			t := time.NewTimer(time.Duration(rtWait) * time.Second)
 			begin := time.Now()
-			if !rtIPv6only && dst.IP.To4() != nil {
-				ipt.IPv4PacketConn().SetTTL(i)
+			if p := ipt.IPv4PacketConn(); p != nil && !rtIPv6only && dst.IP.To4() != nil {
+				p.SetTTL(i)
 			}
-			if !rtIPv4only && dst.IP.To16() != nil && dst.IP.To4() == nil {
-				ipt.IPv6PacketConn().SetHopLimit(i)
+			if p := ipt.IPv6PacketConn(); p != nil && !rtIPv4only && dst.IP.To16() != nil && dst.IP.To4() == nil {
+				p.SetHopLimit(i)
 			}
 			if err := ipt.Probe(rtPayload, &cm, dst.IP, ifi); err != nil {
 				fmt.Fprintf(os.Stdout, "error=%q\n", err)

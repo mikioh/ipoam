@@ -135,14 +135,16 @@ func cvMain(cmd *Command, args []string) {
 			if cvXmitOnly {
 				ipts[0].t.StopReport()
 			}
-			if cvHops >= 0 {
-				ipts[0].t.IPv4PacketConn().SetTTL(cvHops)
-			}
-			if cvMulticastHops >= 0 {
-				ipts[0].t.IPv4PacketConn().SetMulticastTTL(cvMulticastHops)
-			}
-			if cvTC >= 0 {
-				ipts[0].t.IPv4PacketConn().SetTOS(cvTC)
+			if p := ipts[0].t.IPv4PacketConn(); p != nil {
+				if cvHops >= 0 {
+					p.SetTTL(cvHops)
+				}
+				if cvMulticastHops >= 0 {
+					p.SetMulticastTTL(cvMulticastHops)
+				}
+				if cvTC >= 0 {
+					p.SetTOS(cvTC)
+				}
 			}
 		}
 		if !cvIPv4only && p.IP.To16() != nil && p.IP.To4() == nil && ipts[1].t == nil {
@@ -159,14 +161,16 @@ func cvMain(cmd *Command, args []string) {
 			if cvXmitOnly {
 				ipts[1].t.StopReport()
 			}
-			if cvHops >= 0 {
-				ipts[1].t.IPv6PacketConn().SetHopLimit(cvHops)
-			}
-			if cvMulticastHops >= 0 {
-				ipts[1].t.IPv6PacketConn().SetMulticastHopLimit(cvHops)
-			}
-			if cvTC >= 0 {
-				ipts[1].t.IPv6PacketConn().SetTrafficClass(cvTC)
+			if p := ipts[1].t.IPv6PacketConn(); p != nil {
+				if cvHops >= 0 {
+					p.SetHopLimit(cvHops)
+				}
+				if cvMulticastHops >= 0 {
+					p.SetMulticastHopLimit(cvHops)
+				}
+				if cvTC >= 0 {
+					p.SetTrafficClass(cvTC)
+				}
 			}
 		}
 		if ipts[0].t != nil && ipts[1].t != nil {
