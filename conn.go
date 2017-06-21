@@ -182,29 +182,26 @@ func newMaintConn(network, address string) (*conn, error) {
 }
 
 func newICMPConn(network, address string) (*conn, error) {
-	ipa, err := net.ResolveIPAddr("ip", address)
-	if err != nil {
-		return nil, err
-	}
-	if ipa.IP == nil {
+	ip := net.ParseIP(address)
+	if ip == nil || ip.IsUnspecified() {
 		switch network {
 		case "ip4:icmp", "ip4:1", "ip4:icmp+ip6:ipv6-icmp":
-			ipa.IP = net.IPv4zero
+			ip = net.IPv4zero
 		case "ip6:ipv6-icmp", "ip6:58":
-			ipa.IP = net.IPv6unspecified
+			ip = net.IPv6unspecified
 		}
 	}
 	var conn conn
 	var networks []string
-	if ipa.IP.To4() != nil {
+	if ip.To4() != nil {
 		networks = []string{"ip4:icmp", "udp4"}
 		conn.protocol = ianaProtocolICMP
 	}
-	if ipa.IP.To16() != nil && ipa.IP.To4() == nil {
+	if ip.To16() != nil && ip.To4() == nil {
 		networks = []string{"ip6:ipv6-icmp", "udp6"}
 		conn.protocol = ianaProtocolIPv6ICMP
 	}
-	var firstErr error
+	var firstErr, err error
 	conn.c, firstErr = net.ListenPacket(networks[0], address)
 	if firstErr != nil {
 		conn.c, err = icmp.ListenPacket(networks[1], address)
