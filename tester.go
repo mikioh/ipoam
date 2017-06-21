@@ -125,9 +125,9 @@ func (t *Tester) Probe(b []byte, cm *ControlMessage, ip net.IP, ifi *net.Interfa
 }
 
 // NewTester makes both maintenance and probe network connections and
-// listens for incoming ICMP packets addressed to address on the
+// listens for incoming ICMP packets addressed to the address on the
 // maintenance network connection.
-// Network must specify a probe network.
+// The network must specify a probe network.
 // It must be "ip4:icmp", "ip4:1", "ip6:ipv6-icmp", "ip6:58", "udp",
 // "udp4" or "udp6".
 //
