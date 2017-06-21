@@ -120,8 +120,8 @@ func cvMain(cmd *Command, args []string) {
 		t *ipoam.Tester
 		r <-chan ipoam.Report
 	}{}
-	for _, p := range c.List() {
-		if !cvIPv6only && p.IP.To4() != nil && ipts[0].t == nil {
+	for _, pos := range c.List() {
+		if !cvIPv6only && pos.IP.To4() != nil && ipts[0].t == nil {
 			address := "0.0.0.0"
 			if src != nil {
 				address = src.String()
@@ -147,7 +147,7 @@ func cvMain(cmd *Command, args []string) {
 				}
 			}
 		}
-		if !cvIPv4only && p.IP.To16() != nil && p.IP.To4() == nil && ipts[1].t == nil {
+		if !cvIPv4only && pos.IP.To16() != nil && pos.IP.To4() == nil && ipts[1].t == nil {
 			address := "::"
 			if src != nil {
 				address = src.String()
