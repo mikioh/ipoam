@@ -150,10 +150,10 @@ func TestTesterLinkLocalMulticast(t *testing.T) {
 		}
 		for _, r := range rs {
 			if r.Error != nil {
-				t.Logf("%v: %v", tt.ip, r.Error)
+				t.Logf("%v: %v %v", tt.ip, r.Error, r.OrigHeader)
 			}
 			if r.ICMP != nil {
-				t.Logf("%v: %+v", tt.ip, r.ICMP)
+				t.Logf("%v: %+v %v", tt.ip, r.ICMP, r.OrigHeader)
 			}
 		}
 	}

@@ -157,8 +157,20 @@ func NewTester(network, address string) (*Tester, error) {
 		}
 	case "ip6:ipv6-icmp", "ip6:58":
 		t.mconn = t.pconn
-	case "udp", "udp4", "udp6":
+	case "udp":
 		t.mconn, err = newMaintConn("ip4:icmp+ip6:ipv6-icmp", t.pconn.ip.String())
+		if err != nil {
+			t.pconn.close()
+			return nil, err
+		}
+	case "udp4":
+		t.mconn, err = newMaintConn("ip4:icmp", t.pconn.ip.String())
+		if err != nil {
+			t.pconn.close()
+			return nil, err
+		}
+	case "udp6":
+		t.mconn, err = newMaintConn("ip6:ipv6-icmp", t.pconn.ip.String())
 		if err != nil {
 			t.pconn.close()
 			return nil, err
