@@ -33,13 +33,24 @@ func TestMain(t *testing.T) {
 
 	if !testing.Short() {
 		for _, args := range [][]string{
-			{"ipoam", "cv", "-v", "-count=1", "golang.org"},
+			{"ipoam", "cv", "-v", "-count=1", "www.google.com"},
+			{"ipoam", "cv", "-v", "-count=1", "-4", "www.google.com"},
+			{"ipoam", "cv", "-v", "-count=1", "-6", "www.google.com"},
+			{"ipoam", "cv", "-v", "-count=1", "ipv4.google.com"},
+			{"ipoam", "cv", "-v", "-count=1", "ipv6..google.com"},
 			{"ipoam", "cv", "-v", "-count=1", "www.google.com,golang.org"},
+
 			{"ipoam", "cv", "-v", "-count=1", "8.8.8.8"},
 			{"ipoam", "cv", "-v", "-count=1", "8.8.8.8,8.8.4.4"},
 
-			{"ipoam", "rt", "-v", "-hops=1", "www.google.com"},
-			{"ipoam", "rt", "-v", "-hops=1", "8.8.8.8"},
+			{"ipoam", "rt", "-v", "-hops=2", "www.google.com"},
+			{"ipoam", "rt", "-v", "-hops=2", "-4", "www.google.com"},
+			{"ipoam", "rt", "-v", "-hops=2", "-6", "www.google.com"},
+			{"ipoam", "rt", "-v", "-hops=2", "ipv4.google.com"},
+			{"ipoam", "rt", "-v", "-hops=2", "ipv6..google.com"},
+
+			{"ipoam", "rt", "-v", "-hops=2", "8.8.8.8"},
+			{"ipoam", "rt", "-v", "-hops=2", "8.8.4.4"},
 
 			{"ipoam", "sh", "int"},
 			{"ipoam", "sh", "-b", "int"},
