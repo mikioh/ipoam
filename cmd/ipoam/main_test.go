@@ -37,7 +37,7 @@ func TestMain(t *testing.T) {
 			{"ipoam", "cv", "-v", "-count=1", "-4", "www.google.com"},
 			{"ipoam", "cv", "-v", "-count=1", "-6", "www.google.com"},
 			{"ipoam", "cv", "-v", "-count=1", "ipv4.google.com"},
-			{"ipoam", "cv", "-v", "-count=1", "ipv6..google.com"},
+			{"ipoam", "cv", "-v", "-count=1", "ipv6.google.com"},
 			{"ipoam", "cv", "-v", "-count=1", "www.google.com,golang.org"},
 
 			{"ipoam", "cv", "-v", "-count=1", "8.8.8.8"},
@@ -47,7 +47,7 @@ func TestMain(t *testing.T) {
 			{"ipoam", "rt", "-v", "-hops=2", "-4", "www.google.com"},
 			{"ipoam", "rt", "-v", "-hops=2", "-6", "www.google.com"},
 			{"ipoam", "rt", "-v", "-hops=2", "ipv4.google.com"},
-			{"ipoam", "rt", "-v", "-hops=2", "ipv6..google.com"},
+			{"ipoam", "rt", "-v", "-hops=2", "ipv6.google.com"},
 
 			{"ipoam", "rt", "-v", "-hops=2", "8.8.8.8"},
 			{"ipoam", "rt", "-v", "-hops=2", "8.8.4.4"},
