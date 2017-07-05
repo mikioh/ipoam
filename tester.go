@@ -17,7 +17,7 @@ import (
 	"golang.org/x/net/ipv6"
 )
 
-// A ControlMessage represents per packet basis probe options.
+// A ControlMessage contains per packet basis probe options.
 type ControlMessage struct {
 	ID   int // ICMP echo identifier
 	Seq  int // ICMP echo sequence number
@@ -50,7 +50,7 @@ func (t *Tester) IPv6PacketConn() *ipv6.PacketConn {
 	return t.pconn.p6
 }
 
-// Close closes the both maintenance and probe network connections.
+// Close closes both the maintenance and probe network connections.
 func (t *Tester) Close() error {
 	if t == nil || t.pconn == nil || t.mconn == nil {
 		return syscall.EINVAL
