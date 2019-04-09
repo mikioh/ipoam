@@ -85,7 +85,7 @@ func facilityIfMain(cmd *Command, args []string) {
 		}
 	} else {
 		for _, ifi := range ift {
-			fmt.Fprintf(bw, "%s is %s, flags: <%v>, index: %d\n", ifi.Name, status(&ifi), ifi.Flags, ifi.Index)
+			fmt.Fprintf(bw, "%s is %s, flags=<%v> index=%d\n", ifi.Name, status(&ifi), ifi.Flags, ifi.Index)
 			fmt.Fprintf(bw, "\tHardware address is %s\n", hwaddr(&ifi))
 			fmt.Fprintf(bw, "\tMTU %d bytes\n", ifi.MTU)
 			printUnicastAddrs(bw, &ifi)
